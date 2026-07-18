@@ -9,6 +9,7 @@ import java.util.List;
 public class TaskRepository {
     private final List<Task> tasks = new ArrayList<>();
 
+    // Khởi tạo dữ liệu giả lập ban đầu (10 tasks)
     public TaskRepository() {
         tasks.add(new Task(1L, "Task 1", "Setup project structure", "HIGH", 1L));
         tasks.add(new Task(2L, "Task 2", "Create User Model", "MEDIUM", 2L));
@@ -22,7 +23,17 @@ public class TaskRepository {
         tasks.add(new Task(10L, "Task 10", "Deploy to staging", "MEDIUM", 1L));
     }
 
+    // Phương thức lấy toàn bộ danh sách Task
     public List<Task> findAll() {
         return tasks;
+    }
+
+    // Thêm hàm này vào class TaskRepository để lưu task mới
+    public Task save(Task task) {
+        // Tự động tăng ID giả lập dựa trên size của list hiện tại
+        long nextId = tasks.size() + 1;
+        task.setId(nextId);
+        tasks.add(task);
+        return task;
     }
 }

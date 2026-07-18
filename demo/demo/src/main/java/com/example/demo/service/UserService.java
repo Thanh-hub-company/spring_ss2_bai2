@@ -18,4 +18,9 @@ public class UserService {
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
+
+    // --- PHƯƠNG THỨC MỚI: Tìm kiếm User theo ID ---
+    public User findUserById(Long id) {
+        return userRepository.findById(id);
+    }
 }

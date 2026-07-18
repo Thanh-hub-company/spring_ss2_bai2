@@ -5,10 +5,7 @@ import com.example.demo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,19 +21,27 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    // 1. Hàm GET lấy danh sách
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks(@RequestParam(value = "search", required = false) String search) {
-        // Lấy toàn bộ danh sách từ tầng Service
         List<Task> allTasks = taskService.findAllTasks();
-
-        // Nếu có tham số search, tiến hành lọc gần đúng theo title
         if (search != null && !search.trim().isEmpty()) {
             allTasks = allTasks.stream()
                     .filter(task -> task.getTitle().toLowerCase().contains(search.toLowerCase().trim()))
                     .collect(Collectors.toList());
         }
+        return ResponseEntity.ok(allTasks);
+    }
 
-        // Trả về kết quả bọc trong ResponseEntity với trạng thái 200 OK
-        return ResponseEntity.ok(allTasks); // Cách viết ngắn gọn của new ResponseEntity<>(..., HttpStatus.OK)
+    // 2. Hàm POST tạo mới (Bắt buộc phải có @PostMapping)
+    @PostMapping
+    public ResponseEntity<?> createNewTask(@RequestBody Task newTask) {
+        Task savedTask = taskService.createTask(newTask);
+
+        if (savedTask == null) {
+            return new ResponseEntity<>("Lỗi: Người được giao việc (assignedTo) không tồn tại trong hệ thống!", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(savedTask, HttpStatus.CREATED);
     }
 }
